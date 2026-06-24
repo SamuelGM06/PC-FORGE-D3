@@ -19,7 +19,8 @@ public class CorsConfig {
         config.addAllowedOrigin("http://localhost:8080");
         config.addAllowedOrigin("http://localhost:5173");
 
-        
+        // Esto permite cualquier subdominio generado por Vercel para tus despliegues.
+        config.addAllowedOriginPattern("https://*.vercel.app");
         
         
         

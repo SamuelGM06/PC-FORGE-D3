@@ -71,3 +71,8 @@ export default defineConfig([
   },
 ])
 ```
+
+## Despliegue en Vercel
+
+Configura la variable de entorno `VITE_API_URL` en el panel de Vercel con la URL de la API (por ejemplo, `https://mi-api.vercel.app`).
+El frontend usa `import.meta.env.VITE_API_URL` y, si no está definida, utiliza el valor por defecto de `src/config/config.ts`.
