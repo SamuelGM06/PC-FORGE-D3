@@ -138,6 +138,7 @@ function App() {
           onRemove={handleRemoveFromCart}
           onUpdateQuantity={handleUpdateQuantity}
           currentUser={currentUser}
+          onLoginOpen={() => setIsLoginOpen(true)}
           onFinalize={handleFinalize}
         />
       )}

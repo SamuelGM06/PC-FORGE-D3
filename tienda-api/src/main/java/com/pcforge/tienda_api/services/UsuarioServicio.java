@@ -43,7 +43,9 @@ public class UsuarioServicio implements IUsuarioService {
             .rol(normalizarRol(request.getRol()))
             .build();
 
-        return usuarioMapper.toUsuarioDTO(usuarioRepository.save(usuario));
+        UsuarioDTO usuarioDTO = usuarioMapper.toUsuarioDTO(usuarioRepository.save(usuario));
+        String token = tokenService.generateTokenFor(usuarioDTO);
+        return new UsuarioDTO(usuarioDTO.id(), usuarioDTO.nombre(), usuarioDTO.correo(), usuarioDTO.rol(), token);
     }
 
     @Override

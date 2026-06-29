@@ -14,10 +14,11 @@ interface CartProps {
   onRemove: (idProducto: number) => void;
   onUpdateQuantity: (idProducto: number, quantity: number) => void;
   currentUser?: Usuario | null;
+  onLoginOpen: () => void;
   onFinalize?: () => Promise<void>;
 }
 
-  function Cart({
+function Cart({
     items,
     onClear,
     onClose,
@@ -106,9 +107,9 @@ interface CartProps {
               </div>
               {!currentUser ? (
                 <>
-                  <p>Debes iniciar sesión para finalizar la compra.</p>
-                  <button className="primary-action" disabled type="button">
-                    Finalizar compra
+                  <p>Debes iniciar sesión o registrarte para finalizar la compra.</p>
+                  <button className="primary-action" onClick={onLoginOpen} type="button">
+                    Iniciar sesión / Registrar
                   </button>
                 </>
               ) : currentUser.rol !== "CLIENTE" ? (
