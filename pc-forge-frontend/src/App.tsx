@@ -6,8 +6,8 @@ import Cart from "./components/Cart";
 import Login from "./components/Login";
 import type { CartItem } from "./models/CartItem";
 import type { Producto } from "./models/responses/Producto";
-import type { Usuario } from "./models/responses/Usuario";
 import "./App.css";
+import type { Usuario } from "./models/responses/Usuario";
 import { crearPedido } from "./services/PedidoService";
 
 export type ViewMode = "cliente" | "admin";
