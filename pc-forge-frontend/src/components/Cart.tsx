@@ -1,4 +1,5 @@
 import type { CartItem } from "../models/CartItem";
+import type { Usuario } from "../models/responses/Usuario";
 
 const currencyFormatter = new Intl.NumberFormat("es-CR", {
   style: "currency",
@@ -12,7 +13,7 @@ interface CartProps {
   onClose: () => void;
   onRemove: (idProducto: number) => void;
   onUpdateQuantity: (idProducto: number, quantity: number) => void;
-  currentUser?: import("../models/responses/Usuario").Usuario | null;
+  currentUser?: Usuario | null;
   onFinalize?: () => Promise<void>;
 }
 
