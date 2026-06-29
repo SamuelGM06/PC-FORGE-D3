@@ -13,9 +13,9 @@ import com.pcforge.tienda_api.dtos.Detalle_PedidoDTO;
 import com.pcforge.tienda_api.dtos.PedidoCompletoDTO;
 import com.pcforge.tienda_api.dtos.PedidoDTO;
 import com.pcforge.tienda_api.dtos.PedidoRequestDTO;
+import com.pcforge.tienda_api.entities.Detalle_Pedido;
 import com.pcforge.tienda_api.entities.Pedido;
 import com.pcforge.tienda_api.entities.Producto;
-import com.pcforge.tienda_api.entities.Detalle_Pedido;
 import com.pcforge.tienda_api.exceptions.ApiException;
 import com.pcforge.tienda_api.mappers.Detalle_PedidoMapper;
 import com.pcforge.tienda_api.mappers.PedidoMapper;
@@ -34,6 +34,7 @@ public class PedidoServicio implements IPedidoService {
     private final IUsuarioService usuarioService;
     private final PedidoMapper pedidoMapper;
     private final Detalle_PedidoMapper detallePedidoMapper;
+    private final TokenService tokenService;
 
     public PedidoServicio(
         PedidoRepository pedidoRepository,
@@ -41,7 +42,8 @@ public class PedidoServicio implements IPedidoService {
         ProductoRepository productoRepository,
         IUsuarioService usuarioService,
         PedidoMapper pedidoMapper,
-        Detalle_PedidoMapper detallePedidoMapper
+        Detalle_PedidoMapper detallePedidoMapper,
+        TokenService tokenService
     ) {
         this.pedidoRepository = pedidoRepository;
         this.detallePedidoRepository = detallePedidoRepository;
@@ -49,6 +51,7 @@ public class PedidoServicio implements IPedidoService {
         this.usuarioService = usuarioService;
         this.pedidoMapper = pedidoMapper;
         this.detallePedidoMapper = detallePedidoMapper;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -70,7 +73,21 @@ public class PedidoServicio implements IPedidoService {
 
     @Override
     @Transactional
-    public PedidoCompletoDTO crearPedido(PedidoRequestDTO request) {
+    public PedidoCompletoDTO crearPedido(PedidoRequestDTO request, String token) {
+        // Validar token y rol del usuario
+        var usuarioDTO = token == null ? null : tokenService.validateToken(token);
+        if (usuarioDTO == null) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "Debe autenticarse para crear un pedido.");
+        }
+
+        if (!"CLIENTE".equalsIgnoreCase(usuarioDTO.rol())) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "Solo usuarios con rol CLIENTE pueden crear pedidos.");
+        }
+
+        if (!usuarioDTO.id().equals(request.getIdUsuario())) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "No puede crear un pedido para otro usuario.");
+        }
+
         usuarioService.obtenerEntidad(request.getIdUsuario());
 
         Pedido pedido = Pedido.builder()

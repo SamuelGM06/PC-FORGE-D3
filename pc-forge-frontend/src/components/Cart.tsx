@@ -12,6 +12,8 @@ interface CartProps {
   onClose: () => void;
   onRemove: (idProducto: number) => void;
   onUpdateQuantity: (idProducto: number, quantity: number) => void;
+  currentUser?: import("../models/responses/Usuario").Usuario | null;
+  onFinalize?: () => Promise<void>;
 }
 
 function Cart({ items, onClear, onClose, onRemove, onUpdateQuantity }: CartProps) {
@@ -93,10 +95,31 @@ function Cart({ items, onClear, onClose, onRemove, onUpdateQuantity }: CartProps
                 <span>Total</span>
                 <strong>{currencyFormatter.format(total)}</strong>
               </div>
-              <p>El pago se habilitara cuando el cliente pueda iniciar sesion.</p>
-              <button className="primary-action" disabled type="button">
-                Finalizar compra
-              </button>
+              {!currentUser ? (
+                <>
+                  <p>Debes iniciar sesión para finalizar la compra.</p>
+                  <button className="primary-action" disabled type="button">
+                    Finalizar compra
+                  </button>
+                </>
+              ) : currentUser.rol !== "CLIENTE" ? (
+                <>
+                  <p>Solo usuarios con rol CLIENTE pueden finalizar compras.</p>
+                  <button className="primary-action" disabled type="button">
+                    Finalizar compra
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="primary-action"
+                    onClick={() => onFinalize && onFinalize()}
+                    type="button"
+                  >
+                    Finalizar compra
+                  </button>
+                </>
+              )}
               <button className="cart-clear" onClick={onClear} type="button">
                 Vaciar carrito
               </button>

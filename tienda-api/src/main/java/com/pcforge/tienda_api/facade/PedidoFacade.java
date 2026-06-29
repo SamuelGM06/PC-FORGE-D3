@@ -42,8 +42,8 @@ public class PedidoFacade implements IPedidoFacade {
     }
 
     @Override
-    public PedidoCompletoResponseModel crearPedido(PedidoRequestModel request) {
-        return toPedidoCompletoResponseModel(pedidoService.crearPedido(toPedidoRequestDTO(request)));
+    public PedidoCompletoResponseModel crearPedido(PedidoRequestModel request, String token) {
+        return toPedidoCompletoResponseModel(pedidoService.crearPedido(toPedidoRequestDTO(request), token));
     }
 
     @Override

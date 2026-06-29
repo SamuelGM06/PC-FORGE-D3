@@ -14,7 +14,7 @@ public interface IPedidoService {
 
     PedidoCompletoDTO obtenerPedido(Integer idPedido);
 
-    PedidoCompletoDTO crearPedido(PedidoRequestDTO request);
+    PedidoCompletoDTO crearPedido(PedidoRequestDTO request, String token);
 
     PedidoDTO actualizarEstado(Integer idPedido, String estado);
 }

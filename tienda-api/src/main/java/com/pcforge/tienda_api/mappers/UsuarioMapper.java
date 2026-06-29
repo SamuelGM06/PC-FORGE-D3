@@ -16,12 +16,13 @@ public class UsuarioMapper {
             return null;
         }
 
-        return new UsuarioDTO(
-            usuario.getId(),
-            usuario.getNombre(),
-            usuario.getCorreo(),
-            usuario.getRol()
-        );
+            return new UsuarioDTO(
+                usuario.getId(),
+                usuario.getNombre(),
+                usuario.getCorreo(),
+                usuario.getRol(),
+                null
+            );
     }
 
     public List<UsuarioDTO> toUsuarioDTOList(List<Usuario> usuarios) {
@@ -43,7 +44,8 @@ public class UsuarioMapper {
             usuarioDTO.id(),
             usuarioDTO.nombre(),
             usuarioDTO.correo(),
-            usuarioDTO.rol()
+            usuarioDTO.rol(),
+            usuarioDTO.token()
         );
     }
 

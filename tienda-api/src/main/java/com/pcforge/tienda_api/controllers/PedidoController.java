@@ -48,8 +48,15 @@ public class PedidoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PedidoCompletoResponseModel crearPedido(@Valid @RequestBody PedidoRequestModel request) {
-        return pedidoFacade.crearPedido(request);
+    public PedidoCompletoResponseModel crearPedido(
+        @RequestHeader(value = "Authorization", required = false) String authorization,
+        @Valid @RequestBody PedidoRequestModel request
+    ) {
+        String token = null;
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            token = authorization.substring("Bearer ".length());
+        }
+        return pedidoFacade.crearPedido(request, token);
     }
 
     @PutMapping("/{idPedido}/estado")

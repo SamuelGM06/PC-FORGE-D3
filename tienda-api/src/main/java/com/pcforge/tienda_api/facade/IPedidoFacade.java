@@ -14,7 +14,7 @@ public interface IPedidoFacade {
 
     List<PedidoResponseModel> listarPedidosPorUsuario(Integer idUsuario);
 
-    PedidoCompletoResponseModel crearPedido(PedidoRequestModel request);
+    PedidoCompletoResponseModel crearPedido(PedidoRequestModel request, String token);
 
     PedidoResponseModel actualizarEstado(Integer idPedido, String estado);
 }

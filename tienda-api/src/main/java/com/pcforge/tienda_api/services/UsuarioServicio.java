@@ -21,10 +21,12 @@ import com.pcforge.tienda_api.repositories.UsuarioRepository;
 public class UsuarioServicio implements IUsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
+    private final TokenService tokenService;
 
-    public UsuarioServicio(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper) {
+    public UsuarioServicio(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper, TokenService tokenService) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioMapper = usuarioMapper;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -54,7 +56,9 @@ public class UsuarioServicio implements IUsuarioService {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos.");
         }
 
-        return usuarioMapper.toUsuarioDTO(usuario);
+        UsuarioDTO usuarioDTO = usuarioMapper.toUsuarioDTO(usuario);
+        String token = tokenService.generateTokenFor(usuarioDTO);
+        return new UsuarioDTO(usuarioDTO.id(), usuarioDTO.nombre(), usuarioDTO.correo(), usuarioDTO.rol(), token);
     }
 
     @Override
