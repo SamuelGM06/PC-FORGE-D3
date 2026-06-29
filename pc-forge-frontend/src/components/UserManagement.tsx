@@ -1,8 +1,10 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import {
+  getUsuarios,
   registrarUsuario,
   type UsuarioPayload,
 } from "../services/UsuarioService";
+import type { Usuario } from "../models/responses/Usuario";
 
 const emptyUsuario: UsuarioPayload = {
   nombre: "",
@@ -13,9 +15,22 @@ const emptyUsuario: UsuarioPayload = {
 
 function UserManagement() {
   const [formUsuario, setFormUsuario] = useState<UsuarioPayload>(emptyUsuario);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [statusMessage, setStatusMessage] = useState("");
   const [statusType, setStatusType] = useState<"info" | "success" | "error">("info");
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [usersError, setUsersError] = useState("");
+
+  useEffect(() => {
+    getUsuarios()
+      .then(setUsuarios)
+      .catch((error) => {
+        console.error(error);
+        setUsersError("No se pudieron cargar los usuarios.");
+      })
+      .finally(() => setIsLoadingUsers(false));
+  }, []);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -25,6 +40,7 @@ function UserManagement() {
 
     try {
       const usuario = await registrarUsuario(formUsuario);
+      setUsuarios((currentUsers) => [usuario, ...currentUsers]);
       setFormUsuario(emptyUsuario);
       setStatusMessage(`${usuario.nombre} fue registrado correctamente.`);
       setStatusType("success");
@@ -94,6 +110,51 @@ function UserManagement() {
       </form>
 
       {statusMessage && <p className={`status-message ${statusType}`}>{statusMessage}</p>}
+
+      <div className="user-list">
+        <div className="user-list-heading">
+          <div>
+            <p className="eyebrow">Directorio</p>
+            <h3>Usuarios registrados</h3>
+          </div>
+          {!isLoadingUsers && !usersError && <span>{usuarios.length}</span>}
+        </div>
+
+        {isLoadingUsers ? (
+          <p className="user-list-message">Cargando usuarios...</p>
+        ) : usersError ? (
+          <p className="user-list-message error">{usersError}</p>
+        ) : usuarios.length === 0 ? (
+          <p className="user-list-message">No hay usuarios registrados.</p>
+        ) : (
+          <div className="user-table-wrapper">
+            <table className="user-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Correo</th>
+                  <th>Rol</th>
+                </tr>
+              </thead>
+              <tbody>
+                {usuarios.map((usuario) => (
+                  <tr key={usuario.id}>
+                    <td>#{usuario.id}</td>
+                    <td>{usuario.nombre}</td>
+                    <td>{usuario.correo}</td>
+                    <td>
+                      <span className={`role-badge ${usuario.rol.toLowerCase()}`}>
+                        {usuario.rol}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </section>
   );
 }

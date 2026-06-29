@@ -569,6 +569,106 @@
   margin-top: 0;
 }
 
+.user-list {
+  background: rgba(12, 23, 32, 0.86);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+.user-list-heading {
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  padding: 18px;
+}
+
+.user-list-heading h3 {
+  color: var(--text-strong);
+  font-size: 20px;
+  margin: 0;
+}
+
+.user-list-heading > span {
+  align-items: center;
+  background: rgba(53, 199, 242, 0.14);
+  border: 1px solid rgba(53, 199, 242, 0.3);
+  border-radius: 999px;
+  color: var(--text-strong);
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 900;
+  justify-content: center;
+  min-height: 34px;
+  min-width: 34px;
+  padding: 5px 10px;
+}
+
+.user-list-message {
+  color: var(--text);
+  padding: 24px 18px;
+}
+
+.user-list-message.error {
+  color: #ffd6d6;
+}
+
+.user-table-wrapper {
+  overflow-x: auto;
+}
+
+.user-table {
+  border-collapse: collapse;
+  min-width: 620px;
+  width: 100%;
+}
+
+.user-table th,
+.user-table td {
+  border-bottom: 1px solid rgba(38, 56, 69, 0.72);
+  padding: 14px 18px;
+  text-align: left;
+}
+
+.user-table th {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.user-table td {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.user-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.user-table tbody tr:hover {
+  background: rgba(53, 199, 242, 0.05);
+}
+
+.role-badge {
+  background: rgba(53, 199, 242, 0.12);
+  border: 1px solid rgba(53, 199, 242, 0.28);
+  border-radius: 999px;
+  color: #bcefff;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 4px 8px;
+}
+
+.role-badge.admin {
+  background: rgba(242, 140, 56, 0.14);
+  border-color: rgba(242, 140, 56, 0.32);
+  color: #ffd4ae;
+}
+
 .product-grid {
   display: grid;
   gap: 18px;

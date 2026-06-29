@@ -1,5 +1,4 @@
 import { config } from "../config";
-import { usuarios as fallbackUsuarios } from "../data/usuarios";
 import type { Usuario } from "../models/responses/Usuario";
 
 const API_URL = `${config.api.url}/api/usuarios`;
@@ -12,18 +11,13 @@ export interface UsuarioPayload {
 }
 
 export async function getUsuarios(): Promise<Usuario[]> {
-    try {
-        const response = await fetch(API_URL);
+    const response = await fetch(API_URL);
 
-        if (!response.ok) {
-            throw new Error("Error al obtener los usuarios");
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Error fetching usuarios, usando fallback:", error);
-        return fallbackUsuarios;
+    if (!response.ok) {
+        throw new Error("No se pudieron obtener los usuarios");
     }
+
+    return response.json();
 }
 
 export async function registrarUsuario(usuario: UsuarioPayload): Promise<Usuario> {
