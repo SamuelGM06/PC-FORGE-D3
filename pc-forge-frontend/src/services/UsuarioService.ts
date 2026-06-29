@@ -10,6 +10,15 @@ export interface UsuarioPayload {
     rol?: "CLIENTE" | "ADMIN";
 }
 
+export interface LoginPayload {
+    correo: string;
+    password: string;
+}
+
+export interface AuthResponse extends Usuario {
+    token?: string;
+}
+
 export async function getUsuarios(): Promise<Usuario[]> {
     const response = await fetch(API_URL);
 
@@ -35,6 +44,26 @@ export async function registrarUsuario(usuario: UsuarioPayload): Promise<Usuario
             .catch(() => null)) as { mensaje?: string } | null;
 
         throw new Error(errorResponse?.mensaje ?? "No se pudo registrar el usuario");
+    }
+
+    return response.json();
+}
+
+export async function loginUsuario(credentials: LoginPayload): Promise<AuthResponse> {
+    const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+    });
+
+    if (!response.ok) {
+        const errorResponse = (await response
+            .json()
+            .catch(() => null)) as { mensaje?: string } | null;
+
+        throw new Error(errorResponse?.mensaje ?? "Correo o contraseña incorrectos");
     }
 
     return response.json();
