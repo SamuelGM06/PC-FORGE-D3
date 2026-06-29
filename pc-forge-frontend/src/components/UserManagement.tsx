@@ -92,6 +92,21 @@ function UserManagement() {
           />
         </label>
         <label>
+          Rol
+          <select
+            value={formUsuario.rol}
+            onChange={(event) =>
+              setFormUsuario({
+                ...formUsuario,
+                rol: event.target.value as "CLIENTE" | "ADMIN",
+              })
+            }
+          >
+            <option value="CLIENTE">Cliente</option>
+            <option value="ADMIN">Administrador</option>
+          </select>
+        </label>
+        <label>
           Contrasena
           <input
             autoComplete="new-password"

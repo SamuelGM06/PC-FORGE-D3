@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
 import Cart from "./components/Cart";
+import Login from "./components/Login";
 import type { CartItem } from "./models/CartItem";
 import type { Producto } from "./models/responses/Producto";
+import type { AuthResponse } from "./services/UsuarioService";
 import "./App.css";
 
 export type ViewMode = "cliente" | "admin";
 
 function App() {
   const [viewMode, setViewMode] = useState<ViewMode>("cliente");
+  const [authUser, setAuthUser] = useState<AuthResponse | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -20,12 +23,45 @@ function App() {
   );
 
   const handleViewModeChange = (nextViewMode: ViewMode) => {
+    if (nextViewMode === "admin" && authUser?.rol !== "ADMIN") {
+      return;
+    }
+
     setViewMode(nextViewMode);
 
     if (nextViewMode === "admin") {
       setIsCartOpen(false);
     }
   };
+
+  const handleLogin = (user: AuthResponse) => {
+    setAuthUser(user);
+    localStorage.setItem("pc-forge-auth", JSON.stringify(user));
+    setViewMode(user.rol === "ADMIN" ? "admin" : "cliente");
+  };
+
+  const handleLogout = () => {
+    setAuthUser(null);
+    localStorage.removeItem("pc-forge-auth");
+    setViewMode("cliente");
+    setIsCartOpen(false);
+  };
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("pc-forge-auth");
+
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser) as AuthResponse;
+        setAuthUser(parsed);
+        setViewMode(parsed.rol === "ADMIN" ? "admin" : "cliente");
+      } catch {
+        localStorage.removeItem("pc-forge-auth");
+      }
+    }
+  }, []);
+
+  const effectiveViewMode = authUser?.rol === "ADMIN" ? viewMode : "cliente";
 
   const handleAddToCart = (product: Producto) => {
     setCartItems((currentItems) => {
@@ -65,16 +101,22 @@ function App() {
     );
   };
 
+  if (!authUser) {
+    return <Login onLogin={handleLogin} />;
+  }
+
   return (
     <>
       <Header
+        authUser={authUser}
         cartItemCount={cartItemCount}
         onCartOpen={() => setIsCartOpen(true)}
-        viewMode={viewMode}
+        viewMode={effectiveViewMode}
         onViewModeChange={handleViewModeChange}
+        onLogout={handleLogout}
       />
-      <Home onAddToCart={handleAddToCart} viewMode={viewMode} />
-      {viewMode === "cliente" && isCartOpen && (
+      <Home onAddToCart={handleAddToCart} viewMode={effectiveViewMode} />
+      {effectiveViewMode === "cliente" && isCartOpen && (
         <Cart
           items={cartItems}
           onClear={() => setCartItems([])}
