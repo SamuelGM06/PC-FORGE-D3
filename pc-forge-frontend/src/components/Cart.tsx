@@ -25,6 +25,7 @@ function Cart({
     onRemove,
     onUpdateQuantity,
     currentUser,
+    onLoginOpen,
     onFinalize,
   }: CartProps) {
   const total = items.reduce(
