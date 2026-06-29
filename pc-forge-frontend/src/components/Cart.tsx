@@ -16,7 +16,7 @@ interface CartProps {
   onFinalize?: () => Promise<void>;
 }
 
-function Cart({ items, onClear, onClose, onRemove, onUpdateQuantity }: CartProps) {
+function Cart({ items, onClear, onClose, onRemove, onUpdateQuantity, currentUser, onFinalize }: CartProps) {
   const total = items.reduce(
     (currentTotal, item) => currentTotal + item.product.precio * item.quantity,
     0,
