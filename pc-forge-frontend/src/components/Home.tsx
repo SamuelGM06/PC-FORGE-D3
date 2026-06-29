@@ -8,6 +8,7 @@ import {
 } from "../services/ProductoService";
 import type { Producto } from "../models/responses/Producto";
 import type { ViewMode } from "../App";
+import UserManagement from "./UserManagement";
 
 const currencyFormatter = new Intl.NumberFormat("es-CR", {
   style: "currency",
@@ -25,10 +26,11 @@ const emptyProduct: ProductoPayload = {
 };
 
 interface HomeProps {
+  onAddToCart: (product: Producto) => void;
   viewMode: ViewMode;
 }
 
-function Home({ viewMode }: HomeProps) {
+function Home({ onAddToCart, viewMode }: HomeProps) {
   const [products, setProducts] = useState<Producto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("Todos");
@@ -255,6 +257,8 @@ function Home({ viewMode }: HomeProps) {
         </section>
       )}
 
+      {isAdmin && <UserManagement />}
+
       <section className="catalog-section" id="productos" aria-labelledby="catalog-title">
         <div className="section-heading">
           <div>
@@ -314,7 +318,13 @@ function Home({ viewMode }: HomeProps) {
                       </button>
                     </div>
                   ) : (
-                    <button type="button">Agregar</button>
+                    <button
+                      disabled={product.stock === 0}
+                      onClick={() => onAddToCart(product)}
+                      type="button"
+                    >
+                      {product.stock === 0 ? "Agotado" : "Agregar"}
+                    </button>
                   )}
                 </div>
               </article>

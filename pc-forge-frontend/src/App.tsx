@@ -2,17 +2,87 @@ import { useState } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
+import Cart from "./components/Cart";
+import type { CartItem } from "./models/CartItem";
+import type { Producto } from "./models/responses/Producto";
 import "./App.css";
 
 export type ViewMode = "cliente" | "admin";
 
 function App() {
   const [viewMode, setViewMode] = useState<ViewMode>("cliente");
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const cartItemCount = cartItems.reduce(
+    (currentCount, item) => currentCount + item.quantity,
+    0,
+  );
+
+  const handleViewModeChange = (nextViewMode: ViewMode) => {
+    setViewMode(nextViewMode);
+
+    if (nextViewMode === "admin") {
+      setIsCartOpen(false);
+    }
+  };
+
+  const handleAddToCart = (product: Producto) => {
+    setCartItems((currentItems) => {
+      const currentItem = currentItems.find(
+        (item) => item.product.idProducto === product.idProducto,
+      );
+
+      if (!currentItem) {
+        return [...currentItems, { product, quantity: 1 }];
+      }
+
+      return currentItems.map((item) =>
+        item.product.idProducto === product.idProducto
+          ? { ...item, quantity: Math.min(item.quantity + 1, product.stock) }
+          : item,
+      );
+    });
+    setIsCartOpen(true);
+  };
+
+  const handleUpdateQuantity = (idProducto: number, quantity: number) => {
+    setCartItems((currentItems) =>
+      currentItems.map((item) =>
+        item.product.idProducto === idProducto
+          ? {
+              ...item,
+              quantity: Math.max(1, Math.min(quantity, item.product.stock)),
+            }
+          : item,
+      ),
+    );
+  };
+
+  const handleRemoveFromCart = (idProducto: number) => {
+    setCartItems((currentItems) =>
+      currentItems.filter((item) => item.product.idProducto !== idProducto),
+    );
+  };
 
   return (
     <>
-      <Header viewMode={viewMode} onViewModeChange={setViewMode} />
-      <Home viewMode={viewMode} />
+      <Header
+        cartItemCount={cartItemCount}
+        onCartOpen={() => setIsCartOpen(true)}
+        viewMode={viewMode}
+        onViewModeChange={handleViewModeChange}
+      />
+      <Home onAddToCart={handleAddToCart} viewMode={viewMode} />
+      {viewMode === "cliente" && isCartOpen && (
+        <Cart
+          items={cartItems}
+          onClear={() => setCartItems([])}
+          onClose={() => setIsCartOpen(false)}
+          onRemove={handleRemoveFromCart}
+          onUpdateQuantity={handleUpdateQuantity}
+        />
+      )}
       <Footer />
     </>
   );
