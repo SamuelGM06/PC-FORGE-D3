@@ -13,7 +13,13 @@ import com.pcforge.tienda_api.services.IUsuarioService;
 public class TiendaApiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TiendaApiApplication.class, args);
+		SpringApplication app = new SpringApplication(TiendaApiApplication.class);
+		String activeProfile = System.getenv("SPRING_PROFILES_ACTIVE");
+		String dbPassword = System.getenv("DB_PASSWORD");
+		if ((activeProfile == null || activeProfile.isBlank()) && dbPassword != null && !dbPassword.isBlank()) {
+			app.setAdditionalProfiles("prod");
+		}
+		app.run(args);
 	}
 
 	@Bean
