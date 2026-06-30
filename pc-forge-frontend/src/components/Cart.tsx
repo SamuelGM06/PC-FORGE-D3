@@ -123,6 +123,16 @@ function Cart({
                     Finalizar compra
                   </button>
                 </>
+              ) : !currentUser.token ? (
+                <>
+                  <p>
+                    Tu sesión no tiene un token válido. Cierra sesión y vuelve a iniciar sesión para
+                    continuar.
+                  </p>
+                  <button className="primary-action" disabled type="button">
+                    Finalizar compra
+                  </button>
+                </>
               ) : (
                 <>
                   <button
