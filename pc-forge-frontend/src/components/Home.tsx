@@ -7,6 +7,7 @@ import {
   type ProductoPayload,
 } from "../services/ProductoService";
 import type { Producto } from "../models/responses/Producto";
+import type { Usuario } from "../models/responses/Usuario";
 import type { ViewMode } from "../App";
 import UserManagement from "./UserManagement";
 
@@ -28,6 +29,7 @@ const emptyProduct: ProductoPayload = {
 interface HomeProps {
   onAddToCart: (product: Producto) => void;
   viewMode: ViewMode;
+  currentUser?: Usuario | null;
 }
 
 function Home({ onAddToCart, viewMode }: HomeProps) {

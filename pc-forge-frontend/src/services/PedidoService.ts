@@ -36,3 +36,14 @@ export async function crearPedido(payload: { idUsuario: number; detalles: { idPr
 
     return response.json();
 }
+
+export async function getPedidosPorUsuario(idUsuario: number): Promise<Pedido[]> {
+    const response = await fetch(`${API_URL}/usuario/${idUsuario}`);
+
+    if (!response.ok) {
+        const err = await response.json().catch(() => null);
+        throw new Error(err?.mensaje ?? "No se pudieron obtener los pedidos del usuario");
+    }
+
+    return response.json();
+}

@@ -129,7 +129,7 @@ function App() {
         onLoginOpen={() => setIsLoginOpen(true)}
         onLogout={handleLogout}
       />
-      <Home onAddToCart={handleAddToCart} viewMode={viewMode} />
+      <Home onAddToCart={handleAddToCart} viewMode={viewMode} currentUser={currentUser} />
       {viewMode === "cliente" && isCartOpen && (
         <Cart
           items={cartItems}

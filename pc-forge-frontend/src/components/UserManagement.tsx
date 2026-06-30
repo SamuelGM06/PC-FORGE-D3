@@ -5,6 +5,7 @@ import {
   type UsuarioPayload,
 } from "../services/UsuarioService";
 import type { Usuario } from "../models/responses/Usuario";
+import UserOrders from "./UserOrders";
 
 const emptyUsuario: UsuarioPayload = {
   nombre: "",
@@ -21,6 +22,7 @@ function UserManagement() {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
   const [usersError, setUsersError] = useState("");
+  const [selectedUsuario, setSelectedUsuario] = useState<Usuario | null>(null);
 
   useEffect(() => {
     getUsuarios()
@@ -139,7 +141,18 @@ function UserManagement() {
               </thead>
               <tbody>
                 {usuarios.map((usuario) => (
-                  <tr key={usuario.id}>
+                  <tr
+                    className={selectedUsuario?.id === usuario.id ? "selected-row" : ""}
+                    key={usuario.id}
+                    onClick={() => setSelectedUsuario(usuario)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        setSelectedUsuario(usuario);
+                      }
+                    }}
+                  >
                     <td>#{usuario.id}</td>
                     <td>{usuario.nombre}</td>
                     <td>{usuario.correo}</td>
@@ -155,6 +168,8 @@ function UserManagement() {
           </div>
         )}
       </div>
+
+      <UserOrders selectedUser={selectedUsuario} />
     </section>
   );
 }
