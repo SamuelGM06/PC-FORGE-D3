@@ -521,6 +521,46 @@
   z-index: 60;
 }
 
+.feedback-modal-layer {
+  align-items: center;
+  background: rgba(3, 9, 13, 0.8);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: fixed;
+  z-index: 70;
+}
+
+.feedback-backdrop {
+  background: rgba(3, 9, 13, 0.7);
+  inset: 0;
+  position: absolute;
+}
+
+.feedback-modal {
+  background: rgba(9, 19, 31, 0.98);
+  border: 1px solid rgba(53, 199, 242, 0.18);
+  border-radius: 24px;
+  box-shadow: 0 22px 64px rgba(0, 0, 0, 0.38);
+  max-width: 420px;
+  padding: 28px 26px;
+  position: relative;
+  width: min(100%, 420px);
+  z-index: 1;
+}
+
+.feedback-modal-header {
+  margin-bottom: 18px;
+}
+
+.feedback-modal p {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0 0 24px;
+}
+
 .auth-modal {
   background: rgba(9, 19, 31, 0.96);
   border: 1px solid rgba(53, 199, 242, 0.18);

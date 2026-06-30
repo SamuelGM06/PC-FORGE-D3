@@ -18,6 +18,8 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<Usuario | null>(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [successFeedback, setSuccessFeedback] = useState("");
+  const [orderRefreshKey, setOrderRefreshKey] = useState(0);
 
   const cartItemCount = cartItems.reduce(
     (currentCount, item) => currentCount + item.quantity,
@@ -79,11 +81,14 @@ function App() {
       await crearPedido(payload, currentUser.token);
       setCartItems([]);
       setIsCartOpen(false);
-      alert("Compra finalizada. El carrito se ha vaciado.");
+      setOrderRefreshKey((current) => current + 1);
+      setSuccessFeedback("La compra fue realizada con éxito.");
     } catch (error) {
-      alert(error instanceof Error ? error.message : "Error al crear pedido");
+      setSuccessFeedback(error instanceof Error ? error.message : "Error al crear pedido");
     }
   };
+
+  const closeFeedback = () => setSuccessFeedback("");
 
   // Try to restore user from localStorage on mount
   useEffect(() => {
@@ -129,7 +134,26 @@ function App() {
         onLoginOpen={() => setIsLoginOpen(true)}
         onLogout={handleLogout}
       />
-      <Home onAddToCart={handleAddToCart} viewMode={viewMode} currentUser={currentUser} />
+      {successFeedback && (
+        <div className="feedback-modal-layer" role="alertdialog" aria-modal="true" aria-labelledby="feedback-title">
+          <div className="feedback-backdrop" onClick={closeFeedback} />
+          <aside className="feedback-modal">
+            <div className="feedback-modal-header">
+              <h2 id="feedback-title">Compra realizada</h2>
+            </div>
+            <p>{successFeedback}</p>
+            <button className="primary-action" onClick={closeFeedback} type="button">
+              Cerrar
+            </button>
+          </aside>
+        </div>
+      )}
+      <Home
+        onAddToCart={handleAddToCart}
+        viewMode={viewMode}
+        currentUser={currentUser}
+        orderRefreshTrigger={orderRefreshKey}
+      />
       {viewMode === "cliente" && isCartOpen && (
         <Cart
           items={cartItems}

@@ -5,9 +5,10 @@ import type { Usuario } from "../models/responses/Usuario";
 
 interface UserOrdersProps {
   selectedUser?: Usuario | null;
+  refreshTrigger?: number;
 }
 
-function UserOrders({ selectedUser }: UserOrdersProps) {
+function UserOrders({ selectedUser, refreshTrigger }: UserOrdersProps) {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -30,7 +31,7 @@ function UserOrders({ selectedUser }: UserOrdersProps) {
         setError("No se pudieron cargar los pedidos del usuario.");
       })
       .finally(() => setIsLoading(false));
-  }, [selectedUser]);
+  }, [selectedUser, refreshTrigger]);
 
   if (!selectedUser) {
     return (

@@ -10,6 +10,7 @@ import type { Producto } from "../models/responses/Producto";
 import type { Usuario } from "../models/responses/Usuario";
 import type { ViewMode } from "../App";
 import UserManagement from "./UserManagement";
+import UserOrders from "./UserOrders";
 
 const currencyFormatter = new Intl.NumberFormat("es-CR", {
   style: "currency",
@@ -30,9 +31,10 @@ interface HomeProps {
   onAddToCart: (product: Producto) => void;
   viewMode: ViewMode;
   currentUser?: Usuario | null;
+  orderRefreshTrigger?: number;
 }
 
-function Home({ onAddToCart, viewMode }: HomeProps) {
+function Home({ onAddToCart, viewMode, currentUser, orderRefreshTrigger }: HomeProps) {
   const [products, setProducts] = useState<Producto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("Todos");
@@ -177,6 +179,10 @@ function Home({ onAddToCart, viewMode }: HomeProps) {
           <p>productos disponibles</p>
         </div>
       </section>
+
+      {!isAdmin && currentUser?.rol === "CLIENTE" && (
+        <UserOrders selectedUser={currentUser} refreshTrigger={orderRefreshTrigger} />
+      )}
 
       {isAdmin && (
         <section className="admin-section" aria-labelledby="admin-title">
