@@ -3,4 +3,5 @@ export interface Usuario {
     nombre: string;
     correo: string;
     rol: string;
+    token?: string;
 }

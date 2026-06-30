@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,8 +49,15 @@ public class PedidoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PedidoCompletoResponseModel crearPedido(@Valid @RequestBody PedidoRequestModel request) {
-        return pedidoFacade.crearPedido(request);
+    public PedidoCompletoResponseModel crearPedido(
+        @RequestHeader(value = "Authorization", required = false) String authorization,
+        @Valid @RequestBody PedidoRequestModel request
+    ) {
+        String token = null;
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            token = authorization.substring("Bearer ".length());
+        }
+        return pedidoFacade.crearPedido(request, token);
     }
 
     @PutMapping("/{idPedido}/estado")

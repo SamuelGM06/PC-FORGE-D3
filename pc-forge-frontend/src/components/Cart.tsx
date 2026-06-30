@@ -1,4 +1,5 @@
 import type { CartItem } from "../models/CartItem";
+import type { Usuario } from "../models/responses/Usuario";
 
 const currencyFormatter = new Intl.NumberFormat("es-CR", {
   style: "currency",
@@ -12,9 +13,21 @@ interface CartProps {
   onClose: () => void;
   onRemove: (idProducto: number) => void;
   onUpdateQuantity: (idProducto: number, quantity: number) => void;
+  currentUser?: Usuario | null;
+  onLoginOpen: () => void;
+  onFinalize?: () => Promise<void>;
 }
 
-function Cart({ items, onClear, onClose, onRemove, onUpdateQuantity }: CartProps) {
+function Cart({
+    items,
+    onClear,
+    onClose,
+    onRemove,
+    onUpdateQuantity,
+    currentUser,
+    onLoginOpen,
+    onFinalize,
+  }: CartProps) {
   const total = items.reduce(
     (currentTotal, item) => currentTotal + item.product.precio * item.quantity,
     0,
@@ -93,10 +106,44 @@ function Cart({ items, onClear, onClose, onRemove, onUpdateQuantity }: CartProps
                 <span>Total</span>
                 <strong>{currencyFormatter.format(total)}</strong>
               </div>
-              <p>El pago se habilitara cuando el cliente pueda iniciar sesion.</p>
-              <button className="primary-action" disabled type="button">
-                Finalizar compra
-              </button>
+              {!currentUser ? (
+                <>
+                  <p>Debes iniciar sesión o registrarte para finalizar la compra.</p>
+                  <button className="primary-action" onClick={onLoginOpen} type="button">
+                    Iniciar sesión / Registrar
+                  </button>
+                </>
+              ) : currentUser.rol !== "CLIENTE" ? (
+                <>
+                  <p>
+                    Has iniciado sesión con una cuenta de administrador. Para finalizar una compra,
+                    usa una cuenta con rol CLIENTE o crea una nueva cuenta de cliente.
+                  </p>
+                  <button className="primary-action" disabled type="button">
+                    Finalizar compra
+                  </button>
+                </>
+              ) : !currentUser.token ? (
+                <>
+                  <p>
+                    Tu sesión no tiene un token válido. Cierra sesión y vuelve a iniciar sesión para
+                    continuar.
+                  </p>
+                  <button className="primary-action" disabled type="button">
+                    Finalizar compra
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="primary-action"
+                    onClick={() => onFinalize && onFinalize()}
+                    type="button"
+                  >
+                    Finalizar compra
+                  </button>
+                </>
+              )}
               <button className="cart-clear" onClick={onClear} type="button">
                 Vaciar carrito
               </button>

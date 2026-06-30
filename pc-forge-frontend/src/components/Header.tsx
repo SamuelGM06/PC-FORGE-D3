@@ -1,15 +1,19 @@
 import { useState } from "react";
 import logo from "../assets/PCFORGE logo.png";
 import type { ViewMode } from "../App";
+import type { Usuario } from "../models/responses/Usuario";
 
 interface HeaderProps {
   cartItemCount: number;
   onCartOpen: () => void;
   viewMode: ViewMode;
   onViewModeChange: (viewMode: ViewMode) => void;
+  currentUser?: Usuario | null;
+  onLoginOpen: () => void;
+  onLogout: () => void;
 }
 
-function Header({ cartItemCount, onCartOpen, viewMode, onViewModeChange }: HeaderProps) {
+function Header({ cartItemCount, onCartOpen, viewMode, onViewModeChange, currentUser, onLoginOpen, onLogout }: HeaderProps) {
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
 
   const handleClientClick = () => {
@@ -21,6 +25,8 @@ function Header({ cartItemCount, onCartOpen, viewMode, onViewModeChange }: Heade
     onViewModeChange("admin");
     setIsAdminMenuOpen((isOpen) => !isOpen);
   };
+
+  const isAdmin = currentUser?.rol === "ADMIN";
 
   return (
     <header className="site-header">
@@ -44,6 +50,7 @@ function Header({ cartItemCount, onCartOpen, viewMode, onViewModeChange }: Heade
             className={viewMode === "admin" ? "active" : ""}
             onClick={handleAdminClick}
             type="button"
+            disabled={!isAdmin}
           >
             Admin {isAdminMenuOpen ? "▴" : "▾"}
           </button>
@@ -66,6 +73,21 @@ function Header({ cartItemCount, onCartOpen, viewMode, onViewModeChange }: Heade
             </button>
           </>
         )}
+
+        <div className="auth-actions">
+          {currentUser ? (
+            <>
+              <span className="user-name">{currentUser.nombre}</span>
+              <button className="secondary-action" onClick={onLogout} type="button">
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <button className="primary-action" onClick={onLoginOpen} type="button">
+              Iniciar sesión
+            </button>
+          )}
+        </div>
       </nav>
     </header>
   );

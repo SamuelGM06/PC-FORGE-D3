@@ -510,6 +510,225 @@
   color: #ffd6d6;
 }
 
+.auth-modal-layer {
+  align-items: center;
+  background: rgba(3, 9, 13, 0.82);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: fixed;
+  z-index: 60;
+}
+
+.auth-modal {
+  background: rgba(9, 19, 31, 0.96);
+  border: 1px solid rgba(53, 199, 242, 0.18);
+  border-radius: 28px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+  max-width: 480px;
+  padding: 32px 28px;
+  position: relative;
+  width: min(100%, 480px);
+}
+
+.auth-close {
+  background: transparent;
+  border: 0;
+  color: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  font-size: 28px;
+  font-weight: 700;
+  inset: 18px 18px auto auto;
+  position: absolute;
+  line-height: 1;
+  padding: 0;
+}
+
+.auth-header {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.auth-header h2 {
+  color: #ffffff;
+  font-size: 30px;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.auth-subtitle {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 15px;
+  margin: 0;
+}
+
+.auth-tabs {
+  align-items: stretch;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+  display: flex;
+  gap: 6px;
+  margin-bottom: 24px;
+  padding: 6px;
+}
+
+.auth-tab {
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.68);
+  cursor: pointer;
+  flex: 1;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  min-height: 48px;
+  padding: 0 18px;
+  transition: all 180ms ease;
+}
+
+.auth-tab.active {
+  background: rgba(53, 199, 242, 0.16);
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+}
+
+.auth-field {
+  display: grid;
+  gap: 10px;
+}
+
+.auth-field span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.auth-field input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 14px;
+  color: #ffffff;
+  font: inherit;
+  min-height: 50px;
+  outline: none;
+  padding: 14px 16px;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.auth-field input:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(53, 199, 242, 0.5);
+}
+
+.auth-password-row {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr auto;
+}
+
+.password-toggle {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  color: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  font: inherit;
+  min-height: 50px;
+  padding: 0 16px;
+}
+
+.password-strength {
+  display: grid;
+  gap: 10px;
+}
+
+.password-strength span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+}
+
+.strength-meter {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(4, 1fr);
+  min-height: 10px;
+  overflow: hidden;
+}
+
+.strength-segment {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  min-height: 10px;
+  transition: background 180ms ease;
+}
+
+.strength-segment.active {
+  background: linear-gradient(90deg, #50d67e, #20c4f4);
+}
+
+.password-strength small {
+  color: rgba(255, 255, 255, 0.68);
+  display: block;
+  font-size: 13px;
+}
+
+.auth-bool {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+}
+
+.auth-bool label {
+  align-items: center;
+  display: inline-flex;
+  gap: 10px;
+}
+
+.status-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.auth-submit {
+  min-height: 52px;
+}
+
+.auth-cta {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.auth-cta .link-button {
+  background: transparent;
+  border: 0;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.auth-cta .link-button:hover {
+  color: var(--accent);
+}
+
 .product-form {
   background: rgba(12, 23, 32, 0.86);
   border: 1px solid var(--border);

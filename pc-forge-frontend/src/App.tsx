@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
 import Cart from "./components/Cart";
+import Login from "./components/Login";
 import type { CartItem } from "./models/CartItem";
 import type { Producto } from "./models/responses/Producto";
 import "./App.css";
+import type { Usuario } from "./models/responses/Usuario";
+import { crearPedido } from "./services/PedidoService";
 
 export type ViewMode = "cliente" | "admin";
 
@@ -13,6 +16,8 @@ function App() {
   const [viewMode, setViewMode] = useState<ViewMode>("cliente");
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<Usuario | null>(null);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const cartItemCount = cartItems.reduce(
     (currentCount, item) => currentCount + item.quantity,
@@ -46,6 +51,54 @@ function App() {
     setIsCartOpen(true);
   };
 
+  const handleLoginSuccess = (usuario: Usuario) => {
+    setCurrentUser(usuario);
+    localStorage.setItem("pcforge_user", JSON.stringify(usuario));
+    if (usuario.rol === "ADMIN") {
+      setViewMode("admin");
+    } else {
+      setViewMode("cliente");
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem("pcforge_user");
+    setViewMode("cliente");
+  };
+
+  const handleFinalize = async () => {
+    if (!currentUser) return;
+
+    const payload = {
+      idUsuario: currentUser.id,
+      detalles: cartItems.map((item) => ({ idProducto: item.product.idProducto, cantidad: item.quantity })),
+    };
+
+    try {
+      await crearPedido(payload, currentUser.token);
+      setCartItems([]);
+      setIsCartOpen(false);
+      alert("Compra finalizada. El carrito se ha vaciado.");
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Error al crear pedido");
+    }
+  };
+
+  // Try to restore user from localStorage on mount
+  useEffect(() => {
+    const raw = localStorage.getItem("pcforge_user");
+    if (raw) {
+      try {
+        const u: Usuario = JSON.parse(raw);
+        setCurrentUser(u);
+        if (u.rol === "ADMIN") setViewMode("admin");
+      } catch {
+        // ignore
+      }
+    }
+  }, []);
+
   const handleUpdateQuantity = (idProducto: number, quantity: number) => {
     setCartItems((currentItems) =>
       currentItems.map((item) =>
@@ -72,6 +125,9 @@ function App() {
         onCartOpen={() => setIsCartOpen(true)}
         viewMode={viewMode}
         onViewModeChange={handleViewModeChange}
+        currentUser={currentUser}
+        onLoginOpen={() => setIsLoginOpen(true)}
+        onLogout={handleLogout}
       />
       <Home onAddToCart={handleAddToCart} viewMode={viewMode} />
       {viewMode === "cliente" && isCartOpen && (
@@ -81,6 +137,15 @@ function App() {
           onClose={() => setIsCartOpen(false)}
           onRemove={handleRemoveFromCart}
           onUpdateQuantity={handleUpdateQuantity}
+          currentUser={currentUser}
+          onLoginOpen={() => setIsLoginOpen(true)}
+          onFinalize={handleFinalize}
+        />
+      )}
+      {isLoginOpen && (
+        <Login
+          onClose={() => setIsLoginOpen(false)}
+          onLoginSuccess={handleLoginSuccess}
         />
       )}
       <Footer />

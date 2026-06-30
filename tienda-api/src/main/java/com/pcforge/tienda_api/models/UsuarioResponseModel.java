@@ -4,5 +4,6 @@ public record UsuarioResponseModel(
     Integer id,
     String nombre,
     String correo,
-    String rol
+    String rol,
+    String token
 ) {}
