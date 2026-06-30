@@ -79,7 +79,7 @@ function App() {
       await crearPedido(payload, currentUser.token);
       setCartItems([]);
       setIsCartOpen(false);
-      alert("Pedido creado correctamente.");
+      alert("Compra finalizada. El carrito se ha vaciado.");
     } catch (error) {
       alert(error instanceof Error ? error.message : "Error al crear pedido");
     }

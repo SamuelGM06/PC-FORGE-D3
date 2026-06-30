@@ -115,7 +115,10 @@ function Cart({
                 </>
               ) : currentUser.rol !== "CLIENTE" ? (
                 <>
-                  <p>Solo usuarios con rol CLIENTE pueden finalizar compras.</p>
+                  <p>
+                    Has iniciado sesión con una cuenta de administrador. Para finalizar una compra,
+                    usa una cuenta con rol CLIENTE o crea una nueva cuenta de cliente.
+                  </p>
                   <button className="primary-action" disabled type="button">
                     Finalizar compra
                   </button>
