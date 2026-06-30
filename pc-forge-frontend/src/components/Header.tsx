@@ -6,6 +6,7 @@ import type { Usuario } from "../models/responses/Usuario";
 interface HeaderProps {
   cartItemCount: number;
   onCartOpen: () => void;
+  onOrderHistoryOpen: () => void;
   viewMode: ViewMode;
   onViewModeChange: (viewMode: ViewMode) => void;
   currentUser?: Usuario | null;
@@ -13,7 +14,7 @@ interface HeaderProps {
   onLogout: () => void;
 }
 
-function Header({ cartItemCount, onCartOpen, viewMode, onViewModeChange, currentUser, onLoginOpen, onLogout }: HeaderProps) {
+function Header({ cartItemCount, onCartOpen, onOrderHistoryOpen, viewMode, onViewModeChange, currentUser, onLoginOpen, onLogout }: HeaderProps) {
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
 
   const handleClientClick = () => {
@@ -68,6 +69,9 @@ function Header({ cartItemCount, onCartOpen, viewMode, onViewModeChange, current
         {viewMode === "cliente" && (
           <>
             <a href="#productos">Productos</a>
+            <button className="cart-button" onClick={onOrderHistoryOpen} type="button">
+              Historial
+            </button>
             <button className="cart-button" onClick={onCartOpen} type="button">
               Carrito <span>{cartItemCount}</span>
             </button>

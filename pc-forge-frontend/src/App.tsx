@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
 import Cart from "./components/Cart";
+import OrderHistoryDrawer from "./components/OrderHistoryDrawer";
 import Login from "./components/Login";
 import type { CartItem } from "./models/CartItem";
 import type { Producto } from "./models/responses/Producto";
@@ -18,6 +19,7 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<Usuario | null>(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isOrdersOpen, setIsOrdersOpen] = useState(false);
   const [successFeedback, setSuccessFeedback] = useState("");
   const [orderRefreshKey, setOrderRefreshKey] = useState(0);
 
@@ -67,6 +69,15 @@ function App() {
     setCurrentUser(null);
     localStorage.removeItem("pcforge_user");
     setViewMode("cliente");
+    setIsOrdersOpen(false);
+  };
+
+  const handleOrdersOpen = () => {
+    setIsOrdersOpen(true);
+  };
+
+  const handleOrdersClose = () => {
+    setIsOrdersOpen(false);
   };
 
   const handleFinalize = async () => {
@@ -128,6 +139,7 @@ function App() {
       <Header
         cartItemCount={cartItemCount}
         onCartOpen={() => setIsCartOpen(true)}
+        onOrderHistoryOpen={handleOrdersOpen}
         viewMode={viewMode}
         onViewModeChange={handleViewModeChange}
         currentUser={currentUser}
@@ -151,9 +163,14 @@ function App() {
       <Home
         onAddToCart={handleAddToCart}
         viewMode={viewMode}
-        currentUser={currentUser}
-        orderRefreshTrigger={orderRefreshKey}
       />
+      {viewMode === "cliente" && isOrdersOpen && (
+        <OrderHistoryDrawer
+          currentUser={currentUser}
+          onClose={handleOrdersClose}
+          refreshTrigger={orderRefreshKey}
+        />
+      )}
       {viewMode === "cliente" && isCartOpen && (
         <Cart
           items={cartItems}
