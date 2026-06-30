@@ -7,6 +7,7 @@ import java.util.Base64;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.pcforge.tienda_api.dtos.LoginRequestDTO;
@@ -22,6 +23,7 @@ public class UsuarioServicio implements IUsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
     private final TokenService tokenService;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UsuarioServicio(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper, TokenService tokenService) {
         this.usuarioRepository = usuarioRepository;
@@ -39,7 +41,7 @@ public class UsuarioServicio implements IUsuarioService {
         Usuario usuario = Usuario.builder()
             .nombre(request.getNombre().trim())
             .correo(correo)
-            .password(hashPassword(request.getPassword()))
+            .password(passwordEncoder.encode(request.getPassword()))
             .rol(normalizarRol(request.getRol()))
             .build();
 
@@ -53,8 +55,7 @@ public class UsuarioServicio implements IUsuarioService {
         Usuario usuario = usuarioRepository.findByCorreo(request.getCorreo().trim().toLowerCase())
             .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos."));
 
-        String hashedPassword = hashPassword(request.getPassword());
-        if (!hashedPassword.equals(usuario.getPassword()) && !request.getPassword().equals(usuario.getPassword())) {
+        if (!validatePassword(request.getPassword(), usuario.getPassword())) {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos.");
         }
 
@@ -86,7 +87,19 @@ public class UsuarioServicio implements IUsuarioService {
         return rolNormalizado;
     }
 
-    private String hashPassword(String password) {
+    private boolean validatePassword(String rawPassword, String storedPassword) {
+        if (rawPassword == null || storedPassword == null) {
+            return false;
+        }
+
+        if (storedPassword.startsWith("$2a$") || storedPassword.startsWith("$2b$") || storedPassword.startsWith("$2y$")) {
+            return passwordEncoder.matches(rawPassword, storedPassword);
+        }
+
+        return sha256Hash(rawPassword).equals(storedPassword);
+    }
+
+    private String sha256Hash(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
